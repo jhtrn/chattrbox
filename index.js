@@ -1,11 +1,12 @@
 var http = require("http");
 var fs = require("fs");
 var extract = require("./extract");
+var mime = require("mime");
 var error = "app/error.html";
 
 var handleError = function (err, res) {
   fs.readFile(error, function(err,data) {
-    res.writeHead(400, {"Content-Type": "text/html"});
+    res.writeHead(404, {"Content-Type": mime.getType(error)});
     res.write(data);
     res.end();
   });
@@ -20,7 +21,8 @@ var server = http.createServer(function (req, res) {
       handleError(err, res);
       return;
     } else {
-      res.setHeader("Content-Type", "text/html");
+      res.setHeader("Content-Type",mime.getType(filePath));
+      // res.setHeader("Content-Type", "text/html");
       res.end(data);
     }
   });
